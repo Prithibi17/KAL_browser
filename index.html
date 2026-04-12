@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KAL</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <link rel="icon" type="image/png" href="logo.png">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Bar: Navigation & Address -->
+    <header class="top-bar">
+      <div class="drag-region"></div>
+      
+      <div class="top-bar-content">
+        <div class="nav-cluster">
+          <button id="back" class="nav-btn"><span class="material-icons">arrow_back</span></button>
+          <button id="forward" class="nav-btn"><span class="material-icons">arrow_forward</span></button>
+          <button id="reload" class="nav-btn"><span class="material-icons">refresh</span></button>
+        </div>
+
+        <div class="address-bar-wrapper">
+          <div class="address-bar-container">
+            <span id="lock-btn" class="material-icons lock-icon">lock</span>
+            <input type="text" id="url-input" placeholder="Search or enter URL" spellcheck="false">
+            <button id="snapshot-btn" class="address-btn" title="Take Page Snapshot">
+              <span class="material-icons">photo_camera</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button id="menu-btn" class="nav-btn"><span class="material-icons">more_vert</span></button>
+        </div>
+      </div>
+
+      <div class="window-controls">
+        <button id="minimize" class="control-btn"><span class="material-icons">remove</span></button>
+        <button id="maximize" class="control-btn"><span class="material-icons">crop_square</span></button>
+        <button id="close" class="control-btn close-btn"><span class="material-icons">close</span></button>
+      </div>
+    </header>
+
+    <!-- Site Information & Permission Card -->
+    <div id="permission-bar" class="permission-bar hidden">
+      <div class="site-info-header">
+        <span class="material-icons security-icon">verified_user</span>
+        <div class="site-status">
+          <span class="status-title">Connection is secure</span>
+          <span class="status-subtitle">Your information is private</span>
+        </div>
+      </div>
+      
+      <div id="active-request-section" class="active-request hidden">
+        <div class="permission-content">
+          <span id="perm-icon" class="material-icons">vibration</span>
+          <span id="perm-message">Site wants to access your device</span>
+        </div>
+        <div class="permission-actions">
+          <button id="perm-block" class="perm-btn block">Block</button>
+          <button id="perm-allow" class="perm-btn allow">Allow</button>
+        </div>
+      </div>
+    </div>
+
+    <main class="body-container">
+      <!-- Collapsible Sidebar -->
+      <aside id="sidebar" class="sidebar">
+        <div class="nav-pane">
+          <div class="pane-header">
+            <button id="sidebar-toggle-btn" class="sidebar-toggle-btn">
+              <span class="material-icons">menu</span>
+            </button>
+          </div>
+
+          <!-- Integrated Sidebar Search -->
+          <div class="sidebar-search-container">
+            <div id="sidebar-search-box" class="sidebar-search-box">
+              <span class="material-icons search-icon">search</span>
+              <input type="text" id="sidebar-search-input" placeholder="Search Google..." spellcheck="false">
+            </div>
+          </div>
+
+          <div id="tab-list" class="tab-list">
+            <!-- Vertical tabs injected here -->
+          </div>
+          
+          <button id="footer-new-tab-btn" class="footer-add-btn">
+            <span class="material-icons">add</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Web Content Area -->
+      <div id="content-container" class="content-container"></div>
+    </main>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0d1117;
+      --card-bg: rgba(22, 27, 34, 0.98);
+      --border-color: #30363d;
+      --text-color: #c9d1d9;
+      --text-muted: #8b949e;
+      --accent-color: #58a6ff;
+      --lock-green: #3fb950;
+      --red-color: #f85149;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: transparent;
+      color: var(--text-color);
+      overflow: hidden;
+      padding: 10px;
+    }
+
+    .site-info-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      height: 100%;
+      animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .site-info-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .security-icon { color: var(--lock-green); font-size: 24px; }
+    .site-status { display: flex; flex-direction: column; }
+    .status-title { font-size: 14px; font-weight: 600; color: var(--text-color); }
+    .status-subtitle { font-size: 11px; color: var(--text-muted); text-transform: lowercase; }
+
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .content-area::-webkit-scrollbar { width: 4px; }
+    .content-area::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+
+    .section { display: flex; flex-direction: column; gap: 8px; }
+    .section-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .perm-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 10px 14px;
+      border-radius: 10px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+    .perm-info { display: flex; align-items: center; gap: 12px; }
+    .perm-icon { color: var(--accent-color); font-size: 20px; }
+    .perm-text { font-size: 13px; font-weight: 500; color: var(--text-color); text-transform: capitalize; }
+    .perm-status { font-size: 11px; color: var(--text-muted); margin-left: 4px; font-weight: 400; }
+
+    .item-actions { display: flex; gap: 6px; }
+
+    .action-btn {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    .action-btn.allow:hover { background: rgba(63, 185, 80, 0.15); color: var(--lock-green); border-color: var(--lock-green); }
+    .action-btn.block:hover { background: rgba(248, 81, 73, 0.15); color: var(--red-color); border-color: var(--red-color); }
+    .action-btn.active.allow { background: rgba(63, 185, 80, 0.1); color: var(--lock-green); border-color: rgba(63, 185, 80, 0.3); }
+    .action-btn.active.block { background: rgba(248, 81, 73, 0.1); color: var(--red-color); border-color: rgba(248, 81, 73, 0.3); }
+
+    .footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border-color); margin-top: auto; }
+    .footer-text { font-size: 11px; color: var(--text-muted); }
+    .global-btn { font-size: 11px; font-weight: 600; color: var(--accent-color); background: none; border: none; cursor: pointer; padding: 4px; }
+    .global-btn:hover { text-decoration: underline; }
+
+    .empty-state { font-size: 12px; color: var(--text-muted); padding: 20px 0; text-align: center; font-style: italic; }
+  </style>
+</head>
+<body>
+  <div class="site-info-card">
+    <div class="site-info-header">
+      <span class="material-icons security-icon">verified_user</span>
+      <div class="site-status">
+        <span id="hostname-text" class="status-title">Site Settings</span>
+        <span class="status-subtitle">Connection is secure</span>
+      </div>
+    </div>
+    
+    <div class="content-area">
+      <div id="pending-section" class="section hidden">
+        <span class="section-title">New Requests</span>
+        <div id="pending-list"></div>
+      </div>
+
+      <div id="applied-section" class="section">
+        <span class="section-title">Applied Settings</span>
+        <div id="applied-list"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span class="footer-text">Choices are saved permanently.</span>
+      <button id="close-btn" class="global-btn">Done</button>
+    </div>
+  </div>
+
+  <script>
+    const hostnameText = document.getElementById('hostname-text');
+    const pendingSection = document.getElementById('pending-section');
+    const pendingList = document.getElementById('pending-list');
+    const appliedList = document.getElementById('applied-list');
+    const closeBtn = document.getElementById('close-btn');
+    
+    let currentUrl = '';
+    const groupedPending = new Map();
+
+    window.electronAPI.onSiteInfoOpen(({ url }) => {
+      currentUrl = url;
+      hostnameText.textContent = url || 'Site Settings';
+      refreshSettings();
+    });
+
+    window.electronAPI.onPermissionRequest(({ requestId, url, permission }) => {
+      if (!groupedPending.has(permission)) {
+        groupedPending.set(permission, []);
+      }
+      groupedPending.get(permission).push(requestId);
+      renderPending();
+    });
+
+    async function refreshSettings() {
+      const perms = await window.electronAPI.getSitePermissions(currentUrl);
+      appliedList.innerHTML = '';
+      
+      const uniqueKeys = ['media', 'geolocation', 'notifications', 'clipboard-read'];
+      let count = 0;
+
+      uniqueKeys.forEach(key => {
+        if (perms[key] !== undefined) {
+          count++;
+          const allowed = perms[key];
+          const item = createPermItem(key, allowed, (newVal) => {
+            window.electronAPI.updatePermission(currentUrl, key, newVal);
+            refreshSettings();
+          });
+          appliedList.appendChild(item);
+        }
+      });
+
+      if (count === 0) {
+        appliedList.innerHTML = '<div class="empty-state">No special permissions set for this site.</div>';
+      }
+    }
+
+    function renderPending() {
+      pendingList.innerHTML = '';
+      if (groupedPending.size === 0) {
+        pendingSection.classList.add('hidden');
+        return;
+      }
+      
+      pendingSection.classList.remove('hidden');
+      groupedPending.forEach((ids, type) => {
+        const item = createPermItem(type, null, (allowed) => {
+          ids.forEach(id => window.electronAPI.sendPermissionResponse({ requestId: id, allowed }));
+          groupedPending.delete(type);
+          renderPending();
+          refreshSettings();
+        });
+        pendingList.appendChild(item);
+      });
+    }
+
+    function createPermItem(type, status, onAction) {
+      const item = document.createElement('div');
+      item.className = 'perm-item';
+      
+      let icon = 'vibration';
+      const t = type.toLowerCase();
+      if (t.includes('mic') || t.includes('audio')) icon = 'mic';
+      else if (t.includes('camera') || t.includes('video') || t.includes('media')) icon = 'videocam';
+      else if (t.includes('location') || t.includes('geolocation')) icon = 'location_on';
+      else if (t.includes('notification')) icon = 'notifications';
+
+      const statusText = status === true ? '<span class="perm-status">(Allowed)</span>' : 
+                         status === false ? '<span class="perm-status">(Blocked)</span>' : '';
+
+      item.innerHTML = `
+        <div class="perm-info">
+          <span class="material-icons perm-icon">${icon}</span>
+          <span class="perm-text">${type} ${statusText}</span>
+        </div>
+        <div class="item-actions">
+          <button class="action-btn block ${status === false ? 'active' : ''}" title="Block">
+            <span class="material-icons" style="font-size: 18px">block</span>
+          </button>
+          <button class="action-btn allow ${status === true ? 'active' : ''}" title="Allow">
+            <span class="material-icons" style="font-size: 18px">check</span>
+          </button>
+        </div>
+      `;
+
+      const blockBtn = item.querySelector('.block');
+      const allowBtn = item.querySelector('.allow');
+
+      blockBtn.onclick = (e) => { e.stopPropagation(); onAction(false); };
+      allowBtn.onclick = (e) => { e.stopPropagation(); onAction(true); };
+
+      return item;
+    }
+
+    closeBtn.addEventListener('click', () => window.electronAPI.hideSiteInfo());
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') window.electronAPI.hideSiteInfo(); });
+  </script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0d1117;
+      --card-bg: #161b22;
+      --border-color: #30363d;
+      --text-color: #c9d1d9;
+      --text-muted: #8b949e;
+      --accent-color: #58a6ff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 24px;
+    }
+
+    .title-group { display: flex; align-items: center; gap: 16px; }
+    .title-icon { font-size: 32px; color: var(--accent-color); }
+    .title { font-size: 28px; font-weight: 600; }
+
+    .search-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 320px;
+    }
+
+    .search-box input {
+      background: none;
+      border: none;
+      color: var(--text-color);
+      width: 100%;
+      font-size: 14px;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .date-group {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .history-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: transform 0.2s, border-color 0.2s;
+      cursor: pointer;
+      animation: fadeIn 0.3s ease;
+      position: relative;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .history-item:hover {
+      border-color: var(--accent-color);
+      transform: translateX(4px);
+    }
+
+    .time {
+      font-size: 13px;
+      color: var(--text-muted);
+      width: 60px;
+      flex-shrink: 0;
+    }
+
+    .site-info {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow: hidden;
+    }
+
+    .site-title {
+      font-size: 15px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .site-url {
+      font-size: 13px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .actions {
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .history-item:hover .actions { opacity: 1; }
+
+    .delete-btn {
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+    }
+
+    .delete-btn:hover { background: rgba(248, 81, 73, 0.1); color: #f85149; }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 0;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="title-group">
+        <span class="material-icons title-icon">history</span>
+        <h1 class="title">History</h1>
+      </div>
+      <div class="search-box">
+        <span class="material-icons" style="font-size: 20px; color: var(--text-muted)">search</span>
+        <input type="text" id="history-search" placeholder="Search history..." spellcheck="false">
+      </div>
+    </header>
+
+    <div id="history-content">
+      <!-- History items will be injected here -->
+    </div>
+  </div>
+
+  <script>
+    const content = document.getElementById('history-content');
+    const searchInput = document.getElementById('history-search');
+    let allHistory = [];
+
+    async function loadHistory() {
+      allHistory = await window.electronAPI.getHistory();
+      renderHistory(allHistory);
+    }
+
+    function renderHistory(data) {
+      if (!data || data.length === 0) {
+        content.innerHTML = '<div class="empty-state">No browsing history found.</div>';
+        return;
+      }
+
+      content.innerHTML = '';
+      let lastDate = '';
+
+      data.forEach(item => {
+        const dateObj = new Date(item.timestamp);
+        const dateStr = dateObj.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        
+        if (dateStr !== lastDate) {
+          const group = document.createElement('div');
+          group.className = 'date-group';
+          group.textContent = dateStr === new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) ? 'Today' : dateStr;
+          content.appendChild(group);
+          lastDate = dateStr;
+        }
+
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.onclick = (e) => {
+          // Only navigate if we didn't click the delete button
+          if (!e.target.closest('.delete-btn')) {
+            window.location.href = item.url;
+          }
+        };
+
+        const time = dateObj.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
+
+        div.innerHTML = `
+          <div class="time">${time}</div>
+          <div class="site-info">
+            <span class="site-title">${item.title}</span>
+            <span class="site-url">${item.url}</span>
+          </div>
+          <div class="actions">
+            <span class="material-icons delete-btn" title="Remove from history">close</span>
+          </div>
+        `;
+
+        const deleteBtn = div.querySelector('.delete-btn');
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation();
+          window.electronAPI.deleteHistoryEntry(item.timestamp);
+          // Optimistically remove from UI
+          div.remove();
+          // Also remove from local list for search
+          allHistory = allHistory.filter(h => h.timestamp !== item.timestamp);
+        };
+
+        content.appendChild(div);
+      });
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      const filtered = allHistory.filter(h => h.title.toLowerCase().includes(term) || h.url.toLowerCase().includes(term));
+      renderHistory(filtered);
+    });
+
+    loadHistory();
+  </script>
+</body>
+</html>

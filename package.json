@@ -1,0 +1,37 @@
+{
+  "name": "kal",
+  "productName": "KAL",
+  "version": "1.0.0",
+  "description": "KAL - The Advanced Productivity Browser",
+  "author": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "package": "npx electron-packager . KAL --platform=win32 --arch=x64 --out=dist --overwrite --icon=logo.ico",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "build": {
+    "appId": "com.kal.browser",
+    "productName": "KAL",
+    "win": {
+      "target": "nsis",
+      "icon": "logo.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "files": [
+      "**/*",
+      "!dist/*"
+    ]
+  },
+  "keywords": [],
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^41.2.0",
+    "electron-builder": "^26.8.1"
+  }
+}

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0d1117;
+      --card-bg: #161b22;
+      --border-color: #30363d;
+      --text-color: #c9d1d9;
+      --text-muted: #8b949e;
+      --accent-color: #58a6ff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .header {
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .title { font-size: 32px; font-weight: 600; margin-bottom: 8px; }
+    .subtitle { color: var(--text-muted); font-size: 14px; }
+
+    .section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      padding: 20px 24px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border-color);
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .setting-item {
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      transition: background 0.2s;
+    }
+
+    .setting-item:last-child { border-bottom: none; }
+
+    .setting-info { display: flex; flex-direction: column; gap: 4px; }
+    .setting-title { font-size: 15px; font-weight: 500; }
+    .setting-desc { font-size: 13px; color: var(--text-muted); max-width: 400px; }
+
+    .setting-control { display: flex; align-items: center; gap: 12px; }
+
+    input[type="text"] {
+      background: #0d1117;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      width: 280px;
+    }
+
+    input[type="text"]:focus { outline: none; border-color: var(--accent-color); }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #21262d;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px; width: 18px;
+      left: 3px; bottom: 3px;
+      background-color: var(--text-color);
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider { background-color: var(--accent-color); }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: transparent;
+      color: var(--text-color);
+      transition: all 0.2s;
+    }
+
+    .btn:hover { background: #21262d; }
+    .btn-primary { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
+    .btn-primary:hover { filter: brightness(1.1); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">Settings</h1>
+      <p class="subtitle">Personalize your KAL experience</p>
+    </div>
+
+    <div class="section">
+      <div class="section-header">Appearance</div>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-title">Home Page</div>
+          <div class="setting-desc">The URL that opens when you create a new tab</div>
+        </div>
+        <div class="setting-control">
+          <input type="text" id="home-page-input" value="https://www.google.com" spellcheck="false">
+        </div>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-title">Compact Sidebar</div>
+          <div class="setting-desc">Show only site icons by default to maximize your screen space</div>
+        </div>
+        <div class="setting-control">
+          <label class="switch">
+            <input type="checkbox" id="compact-sidebar-toggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">Privacy & Security</div>
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-title">Clear Browsing Data</div>
+          <div class="setting-desc">Remove all history, website permissions, and cached data</div>
+        </div>
+        <div class="setting-control">
+          <button class="btn">Clear Data</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">Extensions (Advanced)</div>
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-title">Load Unpacked Extension</div>
+          <div class="setting-desc">Enter the absolute path to an extension folder containing manifest.json</div>
+        </div>
+        <div class="setting-control">
+          <input type="text" id="extension-path" placeholder="C:\path\to\extension" spellcheck="false">
+          <button id="load-extension-btn" class="btn btn-primary">Load</button>
+        </div>
+      </div>
+      <div id="extension-status" style="padding: 12px 24px; font-size: 13px; display: none;"></div>
+    </div>
+  </div>
+
+  <script>
+    const homeInput = document.getElementById('home-page-input');
+    const compactToggle = document.getElementById('compact-sidebar-toggle');
+    const extInput = document.getElementById('extension-path');
+    const extBtn = document.getElementById('load-extension-btn');
+    const extStatus = document.getElementById('extension-status');
+
+    homeInput.addEventListener('change', (e) => {
+      console.log('Home page set to:', e.target.value);
+    });
+
+    compactToggle.addEventListener('change', (e) => {
+      console.log('Compact sidebar set to:', e.target.checked);
+    });
+
+    extBtn.addEventListener('click', async () => {
+      const path = extInput.value.trim();
+      if (!path) return;
+      
+      extBtn.disabled = true;
+      extStatus.style.display = 'block';
+      extStatus.style.color = 'var(--text-muted)';
+      extStatus.textContent = 'Loading extension...';
+
+      const result = await window.electronAPI.loadExtension(path);
+      
+      if (result.success) {
+        extStatus.style.color = '#79c0ff';
+        extStatus.textContent = `Successfully loaded: ${result.name}`;
+        extInput.value = '';
+      } else {
+        extStatus.style.color = '#ff7b72';
+        extStatus.textContent = `Error: ${result.error}`;
+      }
+      extBtn.disabled = false;
+    });
+  </script>
+</body>
+</html>

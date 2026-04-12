@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body {
+      background: transparent;
+      padding: 0;
+      margin: 0;
+      width: 320px;
+      height: 520px;
+      overflow: hidden;
+    }
+    .app-menu {
+      position: static;
+      width: 100%;
+      height: auto;
+      background-color: #161b22; 
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      padding: 8px 0;
+      animation: menuFade 0.2s ease-out;
+    }
+    @keyframes menuFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      cursor: pointer;
+      color: var(--text-color);
+      transition: all 0.2s;
+      gap: 12px;
+      user-select: none;
+    }
+    .menu-item:hover {
+      background-color: var(--btn-hover);
+    }
+    .menu-icon {
+      font-size: 20px;
+      color: var(--text-muted);
+    }
+    .menu-label {
+      flex-grow: 1;
+      font-size: 13.5px;
+      font-weight: 500;
+    }
+    .menu-shortcut {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+    .menu-divider {
+      height: 1px;
+      background-color: var(--border-color);
+      margin: 8px 0;
+    }
+    .zoom-section {
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      gap: 12px;
+    }
+    .zoom-controls {
+      display: flex;
+      align-items: center;
+      background: #0d1117;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      padding: 2px;
+      margin-left: auto;
+    }
+    .zoom-btn {
+      background: none;
+      border: none;
+      color: var(--text-color);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .zoom-btn:hover { background-color: #21262d; }
+    #zoom-level {
+      width: 44px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div id="app-menu" class="app-menu">
+    <div class="menu-section">
+      <div class="menu-item" id="menu-new-tab">
+        <span class="material-icons-outlined menu-icon">add_box</span>
+        <span class="menu-label">New tab</span>
+        <span class="menu-shortcut">Ctrl+T</span>
+      </div>
+      <div class="menu-item" id="menu-new-window">
+        <span class="material-icons-outlined menu-icon">open_in_new</span>
+        <span class="menu-label">New window</span>
+        <span class="menu-shortcut">Ctrl+N</span>
+      </div>
+    </div>
+
+    <div class="menu-divider"></div>
+
+    <div class="menu-section">
+      <div class="menu-item" id="menu-history">
+        <span class="material-icons-outlined menu-icon">history</span>
+        <span class="menu-label">History</span>
+      </div>
+      <div class="menu-item" id="menu-downloads">
+        <span class="material-icons-outlined menu-icon">file_download</span>
+        <span class="menu-label">Downloads</span>
+      </div>
+    </div>
+
+    <div class="menu-divider"></div>
+
+    <div class="zoom-section">
+      <span class="material-icons-outlined menu-icon">search</span>
+      <span class="menu-label">Zoom</span>
+      <div class="zoom-controls">
+        <button id="zoom-out" class="zoom-btn"><span class="material-icons">remove</span></button>
+        <span id="zoom-level">100%</span>
+        <button id="zoom-in" class="zoom-btn"><span class="material-icons">add</span></button>
+      </div>
+    </div>
+
+    <div class="menu-divider"></div>
+
+    <div class="menu-section">
+      <div class="menu-item" id="menu-print">
+        <span class="material-icons-outlined menu-icon">print</span>
+        <span class="menu-label">Print...</span>
+        <span class="menu-shortcut">Ctrl+P</span>
+      </div>
+    </div>
+
+    <div class="menu-divider"></div>
+
+    <div class="menu-section">
+      <div class="menu-item" id="menu-settings">
+        <span class="material-icons-outlined menu-icon">settings</span>
+        <span class="menu-label">Settings</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const zoomInBtn = document.getElementById('zoom-in');
+    const zoomOutBtn = document.getElementById('zoom-out');
+    const zoomLevelText = document.getElementById('zoom-level');
+    
+    // Interactive Items
+    const menuNewTab = document.getElementById('menu-new-tab');
+    const menuNewWindow = document.getElementById('menu-new-window');
+    const menuHistory = document.getElementById('menu-history');
+    const menuDownloads = document.getElementById('menu-downloads');
+    const menuPrint = document.getElementById('menu-print');
+    const menuSettings = document.getElementById('menu-settings');
+
+    let currentZoom = 1.0;
+    const zoomLevels = [0.25, 0.33, 0.5, 0.67, 0.75, 0.8, 0.9, 1.0, 1.1, 1.25, 1.5, 1.75, 2.0];
+
+    function updateZoom(newFactor) {
+      currentZoom = newFactor;
+      zoomLevelText.innerText = Math.round(currentZoom * 100) + '%';
+      window.electronAPI.setZoom(currentZoom);
+    }
+
+    zoomInBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const currentIndex = zoomLevels.findIndex(v => v >= currentZoom);
+      if (currentIndex < zoomLevels.length - 1) updateZoom(zoomLevels[currentIndex + 1]);
+    });
+
+    zoomOutBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const currentIndex = zoomLevels.findIndex(v => v >= currentZoom);
+      if (currentIndex > 0) updateZoom(zoomLevels[currentIndex - 1]);
+    });
+
+    // Action Handlers
+    menuNewTab.addEventListener('click', () => {
+      window.electronAPI.createTab('tab-' + Math.random().toString(36).substr(2, 9), 'https://www.google.com');
+      window.electronAPI.hideMenu();
+    });
+
+    menuNewWindow.addEventListener('click', () => {
+      window.electronAPI.createWindow();
+      window.electronAPI.hideMenu();
+    });
+
+    menuHistory.addEventListener('click', () => {
+      window.electronAPI.openHistory();
+      window.electronAPI.hideMenu();
+    });
+
+    menuDownloads.addEventListener('click', () => {
+      window.electronAPI.openDownloads();
+      window.electronAPI.hideMenu();
+    });
+
+    menuPrint.addEventListener('click', () => {
+      window.electronAPI.printPage();
+      window.electronAPI.hideMenu();
+    });
+
+    menuSettings.addEventListener('click', () => {
+      window.electronAPI.openSettings();
+      window.electronAPI.hideMenu();
+    });
+
+    // PERSISTENCE PREVENTER
+    // Stop click events within the menu from closing the menu view itself
+    document.body.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+    });
+  </script>
+</body>
+</html>
