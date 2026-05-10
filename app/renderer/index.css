@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap');
+@import "tailwindcss";
+@config "../../tailwind.config.js";
+
+@layer base {
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #09090b;
+    font-family: 'Barlow', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    transform: translate3d(0,0,0); /* Force GPU layer */
+    backface-visibility: hidden;
+  }
+  
+  .app-region-drag {
+    -webkit-app-region: drag;
+  }
+  
+  .app-region-no-drag {
+    -webkit-app-region: no-drag;
+  }
+
+  button, input, a, [role="button"], .cursor-pointer {
+    -webkit-app-region: no-drag;
+  }
+
+  /* Rain Animation Layer */
+  .rain-layer {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(180deg, rgba(255,255,255,0.03) 0px, transparent 1px);
+    background-size: 3px 55px;
+    animation: rainfall 0.45s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes rainfall {
+    to { background-position: 0 55px; }
+  }
+
+  /* Vignette Overlay */
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Scrollbar - Industrial Noir */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* Tactical HUD System - KAL PROTOTYPE */
+  :root {
+    --kal-bg: #050608;
+    --kal-surface: #0a0c10;
+    --kal-surface-alt: #12151a;
+    --kal-border: #1a1e24;
+    --kal-accent: #00A6FF;
+    --kal-danger: #FF2B2B;
+    --kal-text: #ffffff;
+    --kal-text-muted: #8e959f;
+    --kal-text-disabled: #2d333d;
+  }
+
+  .weathered-surface {
+    background-color: var(--kal-bg);
+    position: relative;
+  }
+  
+  .hud-grid {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(0, 166, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 166, 255, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .hud-dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 0);
+    background-size: 20px 20px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .hex-clip-bar {
+    clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0% 50%);
+  }
+
+  .tactical-tile {
+    background-color: var(--kal-surface);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .tactical-tile:hover {
+    border-color: rgba(0, 166, 255, 0.2);
+    background-color: var(--kal-surface-alt);
+  }
+
+  .section-header {
+    text-align: left;
+    font-size: 7px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--kal-accent);
+    padding: 2rem 1.5rem 0.5rem 1.5rem;
+    display: flex;
+    align-items: center;
+    opacity: 0.6;
+  }
+
+  .technical-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .vignette-heavy {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.8) 100%);
+    z-index: 2;
+  }
+
+  .active-indicator::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 20px;
+    background: var(--kal-accent);
+    box-shadow: 0 0 15px var(--kal-accent);
+    border-radius: 0 2px 2px 0;
+  }
+
+  .tech-line {
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(0,166,255,0.05), transparent);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

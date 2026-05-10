@@ -1,0 +1,21 @@
+KAL BROWSER - END USER LICENSE AGREEMENT (EULA)
+
+1. ACCEPTANCE OF TERMS
+By installing and using Kal Browser ("the Software"), you agree to be bound by the terms of this License Agreement.
+
+2. LICENSE GRANT
+We grant you a personal, non-transferable, non-exclusive license to use the Software on your Windows device for personal or professional browsing.
+
+3. PRIVACY & SECURITY
+Kal Browser is designed with a "Privacy-First" architecture. We do not sell your personal data. All tactical data is stored locally on your device.
+
+4. USER CONDUCT
+You agree not to use the Software for any illegal activities or to attempt to reverse engineer the tactical core.
+
+5. NO WARRANTY
+The Software is provided "AS IS" without warranty of any kind. Use at your own risk.
+
+6. TERMINATION
+This license is effective until terminated by you or us. Upon termination, you must cease all use of the Software and uninstall it.
+
+(C) 2026 KAL_OS SYSTEMS. ALL RIGHTS RESERVED.
